@@ -1,0 +1,110 @@
+name: "Terraform Apply"
+
+on:
+  workflow_dispatch:
+    inputs:
+      cloud_provider:
+        description: "Target Cloud / Infrastructure Provider"
+        required: true
+        default: "gcp"
+        type: choice
+        options:
+          - gcp
+          - azure
+          - aws
+          - kubernetes
+      cluster_mode:
+        description: "Cluster Topology Mode (simple: 1 master | HA: 3 masters)"
+        required: true
+        default: "simple"
+        type: choice
+        options:
+          - simple
+          - HA
+
+concurrency:
+  group: terraform-${{ inputs.cloud_provider }}
+  cancel-in-progress: false
+
+jobs:
+  terraform-apply:
+    name: "Terraform Apply"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.cloud_provider }}
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      TF_PLUGIN_CACHE_DIR: ${{ github.workspace }}/.terraform-plugin-cache
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Cache Terraform Plugins
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/.terraform-plugin-cache
+          key: ${{ runner.os }}-terraform-${{ inputs.cloud_provider }}-${{ hashFiles('**/.terraform.lock.hcl') }}
+          restore-keys: |
+            ${{ runner.os }}-terraform-${{ inputs.cloud_provider }}-
+            ${{ runner.os }}-terraform-
+
+      - name: Authenticate to Google Cloud (GCP)
+        if: ${{ inputs.cloud_provider == 'gcp' }}
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Authenticate to Google Cloud (GCS Backend for Kubernetes)
+        if: ${{ inputs.cloud_provider == 'kubernetes' }}
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Authenticate to Azure
+        if: ${{ inputs.cloud_provider == 'azure' }}
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Authenticate to AWS
+        if: ${{ inputs.cloud_provider == 'aws' }}
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Setup Kubeconfig
+        if: ${{ inputs.cloud_provider == 'kubernetes' }}
+        run: |
+          mkdir -p ~/.kube
+          if [ -n "${{ secrets.KUBECONFIG_DATA }}" ]; then
+            echo "${{ secrets.KUBECONFIG_DATA }}" | base64 -d > ~/.kube/config || echo "${{ secrets.KUBECONFIG_DATA }}" > ~/.kube/config
+          fi
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.10.5"
+
+      - name: Terraform Init (Cloud Infrastructure)
+        if: ${{ inputs.cloud_provider != 'kubernetes' }}
+        run: terraform init -backend-config="bucket=tf-state-${{ secrets.GCP_PROJECT_ID }}"
+
+      - name: Terraform Init (Kubernetes Infrastructure)
+        if: ${{ inputs.cloud_provider == 'kubernetes' }}
+        run: terraform init -backend-config="bucket=tf-state-${{ secrets.GCP_PROJECT_ID }}"
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+        env:
+          TF_VAR_project_id: ${{ secrets.GCP_PROJECT_ID }}
+          TF_VAR_admin_ip_ranges: ${{ secrets.ADMIN_IP_RANGES }}
+          TF_VAR_harbor_admin_password: ${{ secrets.HARBOR_ADMIN_PASSWORD }}
+          TF_VAR_cluster_mode: ${{ inputs.cluster_mode }}
