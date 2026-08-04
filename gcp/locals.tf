@@ -29,7 +29,7 @@ locals {
     }
     "worker-3" = {
       machine_type = "t2a-standard-1"
-      zone         = "us-central1-a"
+      zone         = "us-central1-b"
     }
   }
 
