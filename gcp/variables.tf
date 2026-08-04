@@ -1,4 +1,4 @@
-variable "project_id" {
+variable "gcp_project_id" {
   type        = string
   description = "The GCP Project ID"
 }
@@ -15,3 +15,19 @@ variable "zone" {
   default     = "us-central1-a"
 }
 
+variable "gcp_admin_ip_ranges" {
+  type        = list(string)
+  description = "IP ranges allowed to access administrative services (usually your public IP, you can find it using 'curl ifconfig.me')"
+  default     = []
+}
+
+variable "cluster_mode" {
+  type        = string
+  description = "Cluster mode: 'simple' (1 master) or 'HA' (3 masters)"
+  default     = "simple"
+
+  validation {
+    condition     = contains(["simple", "HA"], var.cluster_mode)
+    error_message = "cluster_mode must be either 'simple' or 'HA'."
+  }
+}

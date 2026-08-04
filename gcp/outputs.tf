@@ -1,9 +1,19 @@
-output "network_name" {
-  value       = google_compute_network.k3s_vpc.name
-  description = "The name of the VPC network"
+output "master_ips" {
+  value = {
+    for name, instance in google_compute_instance.master : name => {
+      internal_ip = instance.network_interface[0].network_ip
+      external_ip = instance.network_interface[0].access_config[0].nat_ip
+    }
+  }
+  description = "The internal and external IP addresses of the master nodes"
 }
 
-output "network_id" {
-  value       = google_compute_network.k3s_vpc.id
-  description = "The ID of the VPC network"
+output "worker_ips" {
+  value = {
+    for name, instance in google_compute_instance.worker : name => {
+      internal_ip = instance.network_interface[0].network_ip
+      external_ip = instance.network_interface[0].access_config[0].nat_ip
+    }
+  }
+  description = "The internal and external IP addresses of the worker nodes"
 }
