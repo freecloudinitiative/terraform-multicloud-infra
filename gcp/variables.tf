@@ -1,4 +1,4 @@
-variable "project_id" {
+variable "gcp_project_id" {
   type        = string
   description = "The GCP Project ID"
 }
@@ -15,7 +15,7 @@ variable "zone" {
   default     = "us-central1-a"
 }
 
-variable "admin_ip_ranges" {
+variable "gcp_admin_ip_ranges" {
   type        = list(string)
   description = "IP ranges allowed to access administrative services (usually your public IP, you can find it using 'curl ifconfig.me')"
   default     = []

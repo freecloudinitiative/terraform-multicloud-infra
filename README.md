@@ -11,10 +11,11 @@ This repository contains independent Terraform configurations for provisioning G
 ```bash
 cd gcp
 
-export TF_VAR_project_id="your-gcp-project-id"
-export TF_VAR_admin_ip_ranges="[\"$(curl -s https://ipinfo.io/ip)/32\"]"
+export TF_VAR_gcp_project_id="your-gcp-project-id"
+export TF_VAR_gcp_admin_ip_ranges="[\"$(curl -s https://ipinfo.io/ip)/32\"]"
 
-terraform init -backend-config="bucket=tf-state-$TF_VAR_project_id"
+terraform init -backend-config="bucket=tf-state-$TF_VAR_gcp_project_id"
+
 terraform plan
 terraform apply
 ```

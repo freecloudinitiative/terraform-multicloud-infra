@@ -33,5 +33,5 @@ locals {
     }
   }
 
-  admin_ip_ranges = var.admin_ip_ranges
+  admin_ip_ranges = var.gcp_admin_ip_ranges
 }

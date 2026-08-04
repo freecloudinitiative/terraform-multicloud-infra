@@ -104,6 +104,6 @@ jobs:
       - name: Terraform Destroy
         run: terraform destroy -auto-approve
         env:
-          TF_VAR_project_id: ${{ secrets.GCP_PROJECT_ID }}
-          TF_VAR_admin_ip_ranges: ${{ secrets.ADMIN_IP_RANGES }}
+          TF_VAR_gcp_project_id: ${{ secrets.GCP_PROJECT_ID }}
+          TF_VAR_gcp_admin_ip_ranges: ${{ secrets.ADMIN_IP_RANGES }}
           TF_VAR_cluster_mode: ${{ inputs.cluster_mode }}
