@@ -63,6 +63,19 @@ resource "google_compute_firewall" "allow_gitea" {
   source_ranges = local.admin_ip_ranges
 }
 
+resource "google_compute_firewall" "allow_docker_registry" {
+  name     = "allow-docker-registry"
+  network  = google_compute_network.k3s_vpc.name
+  priority = 1000
+
+  allow {
+    protocol = "tcp"
+    ports    = ["5000"]
+  }
+
+  source_ranges = local.admin_ip_ranges
+}
+
 resource "google_compute_firewall" "allow_loki" {
   name     = "allow-loki"
   network  = google_compute_network.k3s_vpc.name
