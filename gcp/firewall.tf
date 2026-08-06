@@ -89,6 +89,20 @@ resource "google_compute_firewall" "allow_kyverno_policy_reporter" {
   source_ranges = local.admin_ip_ranges
 }
 
+resource "google_compute_firewall" "allow_openbao" {
+  name     = "allow-openbao"
+  network  = google_compute_network.k3s_vpc.name
+  priority = 1000
+
+  allow {
+    protocol = "tcp"
+    ports    = ["8200"]
+  }
+
+  source_ranges = local.admin_ip_ranges
+}
+
+
 resource "google_compute_firewall" "allow_loki" {
   name     = "allow-loki"
   network  = google_compute_network.k3s_vpc.name
