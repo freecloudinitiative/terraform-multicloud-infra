@@ -109,9 +109,10 @@ jobs:
             cat <<EOF > backend_ci.tf
           terraform {
             backend "s3" {
-              bucket = "${{ secrets.AWS_TF_STATE_BUCKET }}"
-              key    = "terraform/state/aws.tfstate"
-              region = "us-east-1"
+              bucket       = "${{ secrets.AWS_TF_STATE_BUCKET }}"
+              key          = "terraform/state/aws.tfstate"
+              region       = "us-east-1"
+              use_lockfile = true
             }
           }
           EOF
@@ -126,6 +127,9 @@ jobs:
             }
           }
           EOF
+          else
+            echo "Error: Unsupported provider '$PROVIDER'" >&2
+            exit 1
           fi
 
       - name: Terraform Init
