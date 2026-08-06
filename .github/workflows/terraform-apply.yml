@@ -93,13 +93,43 @@ jobs:
         with:
           terraform_version: "1.10.5"
 
-      - name: Terraform Init (Cloud Infrastructure)
-        if: ${{ inputs.cloud_provider != 'kubernetes' }}
-        run: terraform init -backend-config="bucket=tf-state-${{ secrets.GCP_PROJECT_ID }}"
+      - name: Generate Remote Backend for CI
+        run: |
+          PROVIDER="${{ inputs.cloud_provider }}"
+          if [ "$PROVIDER" = "gcp" ] || [ "$PROVIDER" = "kubernetes" ]; then
+            cat <<EOF > backend_ci.tf
+          terraform {
+            backend "gcs" {
+              bucket = "tf-state-${{ secrets.GCP_PROJECT_ID }}"
+              prefix = "terraform/state/$PROVIDER"
+            }
+          }
+          EOF
+          elif [ "$PROVIDER" = "aws" ]; then
+            cat <<EOF > backend_ci.tf
+          terraform {
+            backend "s3" {
+              bucket = "${{ secrets.AWS_TF_STATE_BUCKET }}"
+              key    = "terraform/state/aws.tfstate"
+              region = "us-east-1"
+            }
+          }
+          EOF
+          elif [ "$PROVIDER" = "azure" ]; then
+            cat <<EOF > backend_ci.tf
+          terraform {
+            backend "azurerm" {
+              resource_group_name  = "${{ secrets.AZURE_TF_STATE_RG }}"
+              storage_account_name = "${{ secrets.AZURE_TF_STATE_SA }}"
+              container_name       = "tfstate"
+              key                  = "terraform/state/azure.tfstate"
+            }
+          }
+          EOF
+          fi
 
-      - name: Terraform Init (Kubernetes Infrastructure)
-        if: ${{ inputs.cloud_provider == 'kubernetes' }}
-        run: terraform init -backend-config="bucket=tf-state-${{ secrets.GCP_PROJECT_ID }}"
+      - name: Terraform Init
+        run: terraform init
 
       - name: Terraform Apply
         run: terraform apply -auto-approve

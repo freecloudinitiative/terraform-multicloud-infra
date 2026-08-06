@@ -1,5 +1,5 @@
+# Local backend is used by default for local development.
+# GCS backend configuration is dynamically injected by GitHub Actions workflows.
 terraform {
-  backend "gcs" {
-    prefix = "terraform/state/azure"
-  }
+  # Default local backend
 }
