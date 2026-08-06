@@ -70,7 +70,20 @@ resource "google_compute_firewall" "allow_docker_registry" {
 
   allow {
     protocol = "tcp"
-    ports    = ["5000"]
+    ports    = ["5000", "5001"]
+  }
+
+  source_ranges = local.admin_ip_ranges
+}
+
+resource "google_compute_firewall" "allow_kyverno_policy_reporter" {
+  name     = "allow-kyverno-policy-reporter"
+  network  = google_compute_network.k3s_vpc.name
+  priority = 1000
+
+  allow {
+    protocol = "tcp"
+    ports    = ["8082"]
   }
 
   source_ranges = local.admin_ip_ranges
