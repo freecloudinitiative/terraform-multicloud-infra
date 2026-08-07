@@ -142,3 +142,36 @@ jobs:
           TF_VAR_gcp_admin_ip_ranges: ${{ secrets.ADMIN_IP_RANGES }}
           TF_VAR_harbor_admin_password: ${{ secrets.HARBOR_ADMIN_PASSWORD }}
           TF_VAR_cluster_mode: ${{ inputs.cluster_mode }}
+
+      - name: Trigger Ansible Playbooks Workflow
+        if: success()
+        run: |
+          IPS_JSON=$(terraform output -json external_ips)
+
+          MASTER_1=$(echo "$IPS_JSON" | jq -r '."master-1" // empty')
+          WORKER_1=$(echo "$IPS_JSON" | jq -r '."worker-1" // empty')
+          WORKER_2=$(echo "$IPS_JSON" | jq -r '."worker-2" // empty')
+          WORKER_3=$(echo "$IPS_JSON" | jq -r '."worker-3" // empty')
+
+          echo "Triggering Ansible Playbook workflow with IPs:"
+          echo "master-1: $MASTER_1"
+          echo "worker-1: $WORKER_1"
+          echo "worker-2: $WORKER_2"
+          echo "worker-3: $WORKER_3"
+
+          curl -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GH_PAT_TOKEN }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/freecloudinitiative/ansible-automation/actions/workflows/run-playbooks.yml/dispatches \
+            -d "{
+              \"ref\": \"main\",
+              \"inputs\": {
+                \"cloud_provider\": \"${{ inputs.cloud_provider }}\",
+                \"master_1_ip\": \"$MASTER_1\",
+                \"worker_1_ip\": \"$WORKER_1\",
+                \"worker_2_ip\": \"$WORKER_2\",
+                \"worker_3_ip\": \"$WORKER_3\"
+              }
+            }"
+
