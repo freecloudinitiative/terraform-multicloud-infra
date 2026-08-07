@@ -5,7 +5,7 @@ resource "google_compute_firewall" "allow_grafana" {
 
   allow {
     protocol = "tcp"
-    ports    = ["3000"]
+    ports    = ["3000", "30001"]
   }
 
   source_ranges = local.admin_ip_ranges
@@ -31,7 +31,7 @@ resource "google_compute_firewall" "allow_prometheus" {
 
   allow {
     protocol = "tcp"
-    ports    = ["9090"]
+    ports    = ["9090", "30090"]
   }
 
   source_ranges = local.admin_ip_ranges
@@ -83,7 +83,7 @@ resource "google_compute_firewall" "allow_kyverno_policy_reporter" {
 
   allow {
     protocol = "tcp"
-    ports    = ["8082"]
+    ports    = ["8082", "30802"]
   }
 
   source_ranges = local.admin_ip_ranges

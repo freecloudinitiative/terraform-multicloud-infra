@@ -25,7 +25,7 @@ locals {
     }
     "worker-2" = {
       machine_type = "t2a-standard-2"
-      zone         = "europe-west4-b"
+      zone         = "us-central1-a"
     }
     "worker-3" = {
       machine_type = "t2a-standard-1"
