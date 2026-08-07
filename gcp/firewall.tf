@@ -70,20 +70,7 @@ resource "google_compute_firewall" "allow_docker_registry" {
 
   allow {
     protocol = "tcp"
-    ports    = ["5000", "5001"]
-  }
-
-  source_ranges = local.admin_ip_ranges
-}
-
-resource "google_compute_firewall" "allow_kyverno_policy_reporter" {
-  name     = "allow-kyverno-policy-reporter"
-  network  = google_compute_network.k3s_vpc.name
-  priority = 1000
-
-  allow {
-    protocol = "tcp"
-    ports    = ["8082", "30802"]
+    ports    = ["5000", "5001", "30500"]
   }
 
   source_ranges = local.admin_ip_ranges
@@ -96,7 +83,7 @@ resource "google_compute_firewall" "allow_openbao" {
 
   allow {
     protocol = "tcp"
-    ports    = ["8200"]
+    ports    = ["8200", "30200"]
   }
 
   source_ranges = local.admin_ip_ranges
@@ -149,7 +136,7 @@ resource "google_compute_firewall" "allow_alloy" {
 
   allow {
     protocol = "tcp"
-    ports    = ["12345"]
+    ports    = ["12345", "31234"]
   }
 
   source_ranges = local.admin_ip_ranges
@@ -163,7 +150,7 @@ resource "google_compute_firewall" "allow_traefik" {
 
   allow {
     protocol = "tcp"
-    ports    = ["9000"]
+    ports    = ["9000", "30900"]
   }
 
   source_ranges = local.admin_ip_ranges
