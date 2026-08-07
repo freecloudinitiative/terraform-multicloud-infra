@@ -18,7 +18,7 @@ resource "google_compute_firewall" "allow_argocd" {
 
   allow {
     protocol = "tcp"
-    ports    = ["8080"]
+    ports    = ["8080", "30443"]
   }
 
   source_ranges = local.admin_ip_ranges
