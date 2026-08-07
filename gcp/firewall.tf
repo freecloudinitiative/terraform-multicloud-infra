@@ -250,3 +250,17 @@ resource "google_compute_firewall" "k3s_allow_ssh" {
 
   source_ranges = local.admin_ip_ranges
 }
+
+resource "google_compute_firewall" "allow_sample_app" {
+  name     = "allow-sample-app"
+  network  = google_compute_network.k3s_vpc.name
+  priority = 1000
+
+  allow {
+    protocol = "tcp"
+    ports    = ["30080"]
+  }
+
+  source_ranges = local.admin_ip_ranges
+}
+
