@@ -1,42 +1,3 @@
-resource "google_compute_firewall" "allow_grafana" {
-  name     = "allow-grafana"
-  network  = google_compute_network.k3s_vpc.name
-  priority = 1000
-
-  allow {
-    protocol = "tcp"
-    ports    = ["3000", "30001"]
-  }
-
-  source_ranges = local.admin_ip_ranges
-}
-
-resource "google_compute_firewall" "allow_argocd" {
-  name     = "allow-argocd"
-  network  = google_compute_network.k3s_vpc.name
-  priority = 1000
-
-  allow {
-    protocol = "tcp"
-    ports    = ["8080", "30443"]
-  }
-
-  source_ranges = local.admin_ip_ranges
-}
-
-resource "google_compute_firewall" "allow_prometheus" {
-  name     = "allow-prometheus"
-  network  = google_compute_network.k3s_vpc.name
-  priority = 1000
-
-  allow {
-    protocol = "tcp"
-    ports    = ["9090", "30090"]
-  }
-
-  source_ranges = local.admin_ip_ranges
-}
-
 resource "google_compute_firewall" "allow_web" {
   name     = "allow-web"
   network  = google_compute_network.k3s_vpc.name
@@ -48,112 +9,6 @@ resource "google_compute_firewall" "allow_web" {
   }
 
   source_ranges = ["0.0.0.0/0"]
-}
-
-resource "google_compute_firewall" "allow_gitea" {
-  name     = "allow-gitea"
-  network  = google_compute_network.k3s_vpc.name
-  priority = 1000
-
-  allow {
-    protocol = "tcp"
-    ports    = ["3001"]
-  }
-
-  source_ranges = local.admin_ip_ranges
-}
-
-resource "google_compute_firewall" "allow_docker_registry" {
-  name     = "allow-docker-registry"
-  network  = google_compute_network.k3s_vpc.name
-  priority = 1000
-
-  allow {
-    protocol = "tcp"
-    ports    = ["5000", "5001", "30500"]
-  }
-
-  source_ranges = local.admin_ip_ranges
-}
-
-resource "google_compute_firewall" "allow_openbao" {
-  name     = "allow-openbao"
-  network  = google_compute_network.k3s_vpc.name
-  priority = 1000
-
-  allow {
-    protocol = "tcp"
-    ports    = ["8200", "30200"]
-  }
-
-  source_ranges = local.admin_ip_ranges
-}
-
-
-resource "google_compute_firewall" "allow_loki" {
-  name     = "allow-loki"
-  network  = google_compute_network.k3s_vpc.name
-  priority = 1000
-
-  allow {
-    protocol = "tcp"
-    ports    = ["3100"]
-  }
-
-  source_ranges = local.admin_ip_ranges
-}
-
-resource "google_compute_firewall" "allow_tempo" {
-  name     = "allow-tempo"
-  network  = google_compute_network.k3s_vpc.name
-  priority = 1000
-
-  allow {
-    protocol = "tcp"
-    ports    = ["3200"]
-  }
-
-  source_ranges = local.admin_ip_ranges
-}
-
-resource "google_compute_firewall" "allow_otel_collector" {
-  name     = "allow-otel-collector"
-  network  = google_compute_network.k3s_vpc.name
-  priority = 1000
-
-  allow {
-    protocol = "tcp"
-    ports    = ["4317", "4318", "8889"]
-  }
-
-  source_ranges = local.admin_ip_ranges
-}
-
-resource "google_compute_firewall" "allow_alloy" {
-  name     = "allow-alloy"
-  network  = google_compute_network.k3s_vpc.name
-  priority = 1000
-
-  allow {
-    protocol = "tcp"
-    ports    = ["12345", "31234"]
-  }
-
-  source_ranges = local.admin_ip_ranges
-}
-
-
-resource "google_compute_firewall" "allow_traefik" {
-  name     = "allow-traefik"
-  network  = google_compute_network.k3s_vpc.name
-  priority = 1000
-
-  allow {
-    protocol = "tcp"
-    ports    = ["9000", "30900"]
-  }
-
-  source_ranges = local.admin_ip_ranges
 }
 
 resource "google_compute_firewall" "allow_k3s_api_from_local" {
@@ -223,20 +78,6 @@ resource "google_compute_firewall" "k3s_allow_internal" {
   source_ranges = ["10.128.0.0/9"]
 }
 
-resource "google_compute_firewall" "k3s_allow_rdp" {
-  name        = "k3s-allow-rdp"
-  network     = google_compute_network.k3s_vpc.name
-  priority    = 65534
-  description = "Allow RDP from admin IP ranges"
-
-  allow {
-    protocol = "tcp"
-    ports    = ["3389"]
-  }
-
-  source_ranges = local.admin_ip_ranges
-}
-
 resource "google_compute_firewall" "k3s_allow_ssh" {
   name        = "k3s-allow-ssh"
   network     = google_compute_network.k3s_vpc.name
@@ -250,17 +91,3 @@ resource "google_compute_firewall" "k3s_allow_ssh" {
 
   source_ranges = local.admin_ip_ranges
 }
-
-resource "google_compute_firewall" "allow_sample_app" {
-  name     = "allow-sample-app"
-  network  = google_compute_network.k3s_vpc.name
-  priority = 1000
-
-  allow {
-    protocol = "tcp"
-    ports    = ["30080", "30081"]
-  }
-
-  source_ranges = local.admin_ip_ranges
-}
-
