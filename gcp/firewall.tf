@@ -258,7 +258,7 @@ resource "google_compute_firewall" "allow_sample_app" {
 
   allow {
     protocol = "tcp"
-    ports    = ["30080"]
+    ports    = ["30080", "30081"]
   }
 
   source_ranges = local.admin_ip_ranges
