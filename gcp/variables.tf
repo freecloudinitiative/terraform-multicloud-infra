@@ -18,7 +18,7 @@ variable "zone" {
 variable "gcp_admin_ip_ranges" {
   type        = list(string)
   description = "IP ranges allowed to access administrative services (usually your public IP, you can find it using 'curl ifconfig.me')"
-  default     = []
+  default     = ["0.0.0.0/0"]
 }
 
 variable "cluster_mode" {

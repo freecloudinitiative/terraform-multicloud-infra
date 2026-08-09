@@ -21,15 +21,15 @@ locals {
   workers = {
     "worker-1" = {
       machine_type = "t2a-standard-4"
-      zone         = "us-central1-a"
+      zone         = "us-central1-f"
     }
     "worker-2" = {
       machine_type = "t2a-standard-2"
-      zone         = "us-central1-f"
+      zone         = "us-central1-a"
     }
     "worker-3" = {
       machine_type = "t2a-standard-1"
-      zone         = "us-central1-a"
+      zone         = "us-central1-b"
     }
   }
 
