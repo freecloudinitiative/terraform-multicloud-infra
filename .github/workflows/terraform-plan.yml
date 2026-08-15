@@ -60,6 +60,7 @@ jobs:
           TF_VAR_harbor_admin_password: ${{ secrets.HARBOR_ADMIN_PASSWORD }}
           TF_VAR_cluster_mode: simple
         run: |
+          set -o pipefail
           if [ -z "$GCP_SA_KEY" ]; then
             echo "GCP: skipped - GCP_SA_KEY not configured" | tee /tmp/plan-gcp.txt
             exit 0
@@ -91,6 +92,7 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         run: |
+          set -o pipefail
           if [ -z "$AWS_ACCESS_KEY_ID" ]; then
             echo "AWS: skipped - AWS_ACCESS_KEY_ID not configured" | tee /tmp/plan-aws.txt
             exit 0
@@ -122,6 +124,7 @@ jobs:
         env:
           AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
         run: |
+          set -o pipefail
           if [ -z "$AZURE_CREDENTIALS" ]; then
             echo "Azure: skipped - AZURE_CREDENTIALS not configured" | tee /tmp/plan-azure.txt
             exit 0
