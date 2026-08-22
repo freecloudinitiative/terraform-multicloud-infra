@@ -37,3 +37,15 @@ jobs:
           cd azure
           terraform init -backend=false
           terraform validate
+
+      - name: Validate AWS Config
+        run: |
+          cd aws
+          terraform init -backend=false
+          terraform validate
+
+      - name: Validate Linode Config
+        run: |
+          cd linode
+          terraform init -backend=false
+          terraform validate
