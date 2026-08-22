@@ -12,7 +12,7 @@ on:
           - gcp
           - azure
           - aws
-          - kubernetes
+          - linode
       cluster_mode:
         description: "Cluster Topology Mode (simple: 1 master | HA: 3 masters)"
         required: true
@@ -60,8 +60,8 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-      - name: Authenticate to Google Cloud (GCS Backend for Kubernetes)
-        if: ${{ inputs.cloud_provider == 'kubernetes' }}
+      - name: Authenticate to Google Cloud (GCS Backend for Linode)
+        if: ${{ inputs.cloud_provider == 'linode' }}
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
@@ -80,13 +80,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Setup Kubeconfig
-        if: ${{ inputs.cloud_provider == 'kubernetes' }}
-        run: |
-          mkdir -p ~/.kube
-          if [ -n "${{ secrets.KUBECONFIG_DATA }}" ]; then
-            echo "${{ secrets.KUBECONFIG_DATA }}" | base64 -d > ~/.kube/config || echo "${{ secrets.KUBECONFIG_DATA }}" > ~/.kube/config
-          fi
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -96,7 +89,7 @@ jobs:
       - name: Generate Remote Backend for CI
         run: |
           PROVIDER="${{ inputs.cloud_provider }}"
-          if [ "$PROVIDER" = "gcp" ] || [ "$PROVIDER" = "kubernetes" ]; then
+          if [ "$PROVIDER" = "gcp" ] || [ "$PROVIDER" = "linode" ]; then
             cat <<EOF > backend_ci.tf
           terraform {
             backend "gcs" {
@@ -141,3 +134,5 @@ jobs:
           TF_VAR_gcp_project_id: ${{ secrets.GCP_PROJECT_ID }}
           TF_VAR_gcp_admin_ip_ranges: ${{ secrets.ADMIN_IP_RANGES }}
           TF_VAR_cluster_mode: ${{ inputs.cluster_mode }}
+          TF_VAR_linode_token: ${{ secrets.LINODE_TOKEN }}
+          TF_VAR_admin_ip_ranges: ${{ secrets.ADMIN_IP_RANGES }}
