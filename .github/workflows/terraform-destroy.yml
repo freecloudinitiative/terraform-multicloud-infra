@@ -134,3 +134,5 @@ jobs:
           TF_VAR_gcp_project_id: ${{ secrets.GCP_PROJECT_ID }}
           TF_VAR_gcp_admin_ip_ranges: ${{ secrets.ADMIN_IP_RANGES }}
           TF_VAR_cluster_mode: ${{ inputs.cluster_mode }}
+          TF_VAR_linode_token: ${{ secrets.LINODE_TOKEN }}
+          TF_VAR_admin_ip_ranges: ${{ secrets.ADMIN_IP_RANGES }}
