@@ -17,7 +17,7 @@ on:
 
 jobs:
   destroy:
-    uses: freecloudinitiative/.github/.github/workflows/terraform-apply.yml@main
+    uses: freecloudinitiative/.github/.github/workflows/terraform-destroy.yml@main
     with:
       directory: ${{ inputs.provider || 'gcp' }}
       gcp-backend-prefix: ${{ inputs.provider || 'gcp' }}
