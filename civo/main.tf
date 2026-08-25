@@ -50,8 +50,9 @@ resource "civo_instance" "runner" {
   firewall_id = civo_firewall.runner_fw.id
 
   script = templatefile("${path.module}/install_runner.sh.tftpl", {
-    github_pat = var.github_pat
-    github_org = var.github_org
+    github_pat     = var.github_pat
+    github_org     = var.github_org
+    runners_per_vm = var.runners_per_vm
   })
 
   lifecycle {
