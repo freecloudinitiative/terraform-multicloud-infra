@@ -10,7 +10,7 @@ on:
 
 jobs:
   apply:
-    uses: freecloudinitiative/.github/.github/workflows/terraform-apply.yml@main
+    uses: freecloudinitiative/.github/.github/workflows/terraform-apply.yml@2816605944e9c3355e401d527f7f725b05b71ce5
     with:
       directory: '.'
     secrets: inherit
