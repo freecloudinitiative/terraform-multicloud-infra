@@ -1,10 +1,30 @@
 #!/bin/bash
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -y
-apt-get install -y curl jq tar libicu-dev
+apt-get install -y \
+  curl \
+  jq \
+  tar \
+  unzip \
+  libicu-dev \
+  build-essential \
+  make \
+  git \
+  rsync \
+  ca-certificates \
+  gnupg \
+  sudo \
+  python3 \
+  python3-pip \
+  python3-venv \
+  docker.io
+
+# Enable and start Docker daemon
+systemctl enable --now docker || service docker start
 
 # Create runner user (GitHub runner cannot run as root)
-useradd -m -s /bin/bash github
+useradd -m -s /bin/bash github || true
+usermod -aG docker github
 cd /home/github
 
 # Download latest runner package
