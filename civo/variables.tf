@@ -43,7 +43,7 @@ variable "github_org" {
 
 variable "cluster_mode" {
   type        = string
-  description = "Cluster mode: 'simple' (1 runner) or 'HA' (2 runners)"
+  description = "Cluster mode: 'simple' or 'HA'"
   default     = "simple"
 
   validation {
@@ -63,3 +63,15 @@ variable "runners_per_vm" {
   }
 }
 
+
+variable "simple_node_count" {
+  type        = number
+  description = "Number of runner VMs when cluster_mode is 'simple'"
+  default     = 2
+}
+
+variable "ha_node_count" {
+  type        = number
+  description = "Number of runner VMs when cluster_mode is 'HA'"
+  default     = 3
+}

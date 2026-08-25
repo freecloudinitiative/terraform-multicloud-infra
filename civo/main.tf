@@ -42,7 +42,7 @@ resource "civo_firewall" "runner_fw" {
 }
 
 resource "civo_instance" "runner" {
-  count       = var.cluster_mode == "HA" ? 2 : 1
+  count       = var.cluster_mode == "HA" ? var.ha_node_count : var.simple_node_count
   hostname    = "${var.instance_name}-${count.index + 1}"
   size        = var.instance_size
   disk_image  = data.civo_disk_image.ubuntu.diskimages[0].id
@@ -56,6 +56,6 @@ resource "civo_instance" "runner" {
   })
 
   lifecycle {
-    ignore_changes = [script]
+    create_before_destroy = true
   }
 }
