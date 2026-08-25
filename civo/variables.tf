@@ -55,6 +55,6 @@ variable "cluster_mode" {
 variable "runners_per_vm" {
   type        = number
   description = "Number of GitHub Actions runner instances to run concurrently per VM"
-  default     = 6
+  default     = 4
 }
 
