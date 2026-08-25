@@ -56,6 +56,6 @@ resource "civo_instance" "runner" {
   })
 
   lifecycle {
-    ignore_changes = [script]
+    create_before_destroy = true
   }
 }
