@@ -3,6 +3,7 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get update -y
 apt-get install -y \
   curl \
+  wget \
   jq \
   tar \
   unzip \
@@ -21,6 +22,29 @@ apt-get install -y \
 
 # Enable and start Docker daemon
 systemctl enable --now docker || service docker start
+
+# Install yq with architecture detection, strict failure handling, and checksum verification
+ARCH=$(uname -m)
+case $ARCH in
+  x86_64) YQ_ARCH="amd64" ;;
+  aarch64|arm64) YQ_ARCH="arm64" ;;
+  *) echo "Unsupported architecture: $ARCH"; exit 1 ;;
+esac
+
+YQ_VERSION="v4.44.2"
+wget -qO /tmp/yq "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_${YQ_ARCH}" || { echo "Failed to download yq"; exit 1; }
+wget -qO /tmp/yq_checksums "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/checksums" || { echo "Failed to download yq checksums"; exit 1; }
+
+EXPECTED_HASH=$(grep "yq_linux_${YQ_ARCH}$" /tmp/yq_checksums | awk '{print $1}')
+ACTUAL_HASH=$(sha256sum /tmp/yq | awk '{print $1}')
+
+if [ "$EXPECTED_HASH" != "$ACTUAL_HASH" ] || [ -z "$EXPECTED_HASH" ]; then
+  echo "yq checksum validation failed! Expected: $EXPECTED_HASH, Actual: $ACTUAL_HASH"
+  exit 1
+fi
+
+mv /tmp/yq /usr/bin/yq
+chmod +x /usr/bin/yq
 
 # Create runner user (GitHub runner cannot run as root)
 useradd -m -s /bin/bash github || true
