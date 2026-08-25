@@ -29,9 +29,17 @@ resource "civo_firewall" "runner_fw" {
   }
 
   egress_rule {
-    label      = "all"
+    label      = "all-tcp"
     action     = "allow"
     protocol   = "tcp"
+    port_range = "1-65535"
+    cidr       = ["0.0.0.0/0"]
+  }
+
+  egress_rule {
+    label      = "all-udp"
+    action     = "allow"
+    protocol   = "udp"
     port_range = "1-65535"
     cidr       = ["0.0.0.0/0"]
   }
