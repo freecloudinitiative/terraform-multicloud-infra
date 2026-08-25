@@ -29,9 +29,9 @@ cd /home/github
 
 # Download latest runner package
 RUNNER_VERSION="2.336.0"
-curl -o actions-runner-linux-x64.tar.gz -L https://github.com/actions/runner/releases/download/v$${RUNNER_VERSION}/actions-runner-linux-x64-$${RUNNER_VERSION}.tar.gz
-tar xzf ./actions-runner-linux-x64.tar.gz
-chown -R github:github /home/github
+TARBALL="/home/github/actions-runner-linux-x64-$${RUNNER_VERSION}.tar.gz"
+curl -o "$TARBALL" -L https://github.com/actions/runner/releases/download/v$${RUNNER_VERSION}/actions-runner-linux-x64-$${RUNNER_VERSION}.tar.gz
+chown github:github "$TARBALL"
 
 # If no PAT is provided, exit early (user can configure manually)
 if [ -z "${github_pat}" ]; then
@@ -44,9 +44,21 @@ REG_TOKEN=$(curl -sX POST -H "Authorization: token ${github_pat}" \
   -H "Accept: application/vnd.github.v3+json" \
   https://api.github.com/orgs/${github_org}/actions/runners/registration-token | jq -r .token)
 
-# Configure the runner as the 'github' user
-sudo -u github ./config.sh --url https://github.com/${github_org} --token $REG_TOKEN --unattended --replace --name "$(hostname)"
+RUNNER_COUNT=${runners_per_vm}
 
-# Install systemd service and start it as root
-./svc.sh install github
-./svc.sh start
+for i in $(seq 1 $RUNNER_COUNT); do
+  RUNNER_DIR="/home/github/runner-$i"
+  mkdir -p "$RUNNER_DIR"
+  tar xzf "$TARBALL" -C "$RUNNER_DIR"
+  chown -R github:github "$RUNNER_DIR"
+
+  cd "$RUNNER_DIR"
+  sudo -u github ./config.sh --url "https://github.com/${github_org}" \
+    --token "$REG_TOKEN" \
+    --unattended \
+    --replace \
+    --name "$(hostname)-runner-$i"
+
+  ./svc.sh install github
+  ./svc.sh start
+done

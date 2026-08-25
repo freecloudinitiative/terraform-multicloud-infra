@@ -51,3 +51,10 @@ variable "cluster_mode" {
     error_message = "cluster_mode must be either 'simple' or 'HA'."
   }
 }
+
+variable "runners_per_vm" {
+  type        = number
+  description = "Number of GitHub Actions runner instances to run concurrently per VM"
+  default     = 6
+}
+
