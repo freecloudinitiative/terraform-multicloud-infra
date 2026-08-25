@@ -3,10 +3,6 @@ data "civo_network" "custom" {
   id    = var.network_id
 }
 
-data "civo_network" "default" {
-  count = var.network_id == "" ? 1 : 0
-  label = "Default"
-}
 
 data "civo_disk_image" "ubuntu" {
   filter {
@@ -17,7 +13,7 @@ data "civo_disk_image" "ubuntu" {
 
 resource "civo_firewall" "runner_fw" {
   name                 = "${var.instance_name}-fw"
-  network_id           = var.network_id == "" ? data.civo_network.default[0].id : data.civo_network.custom[0].id
+  network_id           = var.network_id == "" ? null : data.civo_network.custom[0].id
   create_default_rules = false
 
   ingress_rule {
@@ -50,7 +46,7 @@ resource "civo_instance" "runner" {
   hostname    = "${var.instance_name}-${count.index + 1}"
   size        = var.instance_size
   disk_image  = data.civo_disk_image.ubuntu.diskimages[0].id
-  network_id  = var.network_id == "" ? data.civo_network.default[0].id : data.civo_network.custom[0].id
+  network_id  = var.network_id == "" ? null : data.civo_network.custom[0].id
   firewall_id = civo_firewall.runner_fw.id
 
   script = templatefile("${path.module}/install_runner.sh.tftpl", {
