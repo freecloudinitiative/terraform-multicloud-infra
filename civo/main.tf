@@ -53,4 +53,8 @@ resource "civo_instance" "runner" {
     github_pat = var.github_pat
     github_org = var.github_org
   })
+
+  lifecycle {
+    ignore_changes = [script]
+  }
 }
