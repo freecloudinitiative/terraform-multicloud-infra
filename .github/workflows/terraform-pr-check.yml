@@ -7,8 +7,8 @@ on:
 
 jobs:
   check:
-    uses: freecloudinitiative/.github/.github/workflows/terraform-pr-checker.yml@2816605944e9c3355e401d527f7f725b05b71ce5
+    uses: freecloudinitiative/.github/.github/workflows/terraform-pr-checker.yml@main
     with:
-      directories: '["gcp", "azure", "aws", "linode"]'
+      directories: '["gcp", "azure", "aws", "linode", "civo"]'
       plan: false
     secrets: inherit
