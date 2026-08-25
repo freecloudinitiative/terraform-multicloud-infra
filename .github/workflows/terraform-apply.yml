@@ -1,11 +1,6 @@
 name: "Terraform Apply"
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - "**.tf"
   workflow_dispatch:
     inputs:
       provider:
