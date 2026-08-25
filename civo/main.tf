@@ -53,6 +53,8 @@ resource "civo_instance" "runner" {
   network_id  = var.network_id == "" ? data.civo_network.default[0].id : data.civo_network.custom[0].id
   firewall_id = civo_firewall.runner_fw.id
 
-  # (Optional) You can automate runner installation using cloud-init
-  # script = file("${path.module}/install_runner.sh")
+  script = templatefile("${path.module}/install_runner.sh.tftpl", {
+    github_pat = var.github_pat
+    github_org = var.github_org
+  })
 }

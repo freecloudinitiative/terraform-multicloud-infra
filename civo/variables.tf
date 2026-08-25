@@ -13,13 +13,26 @@ variable "instance_name" {
 variable "instance_size" {
   type        = string
   description = "The size of the instance. Change to Civo's specific ARM instance size if applicable."
-  default     = "g3.large"
+  default     = "g4s.large"
 }
 
 variable "network_id" {
   type        = string
   description = "The ID of the network to deploy into. Leaves default if empty."
   default     = ""
+}
+
+variable "github_pat" {
+  type        = string
+  description = "GitHub Personal Access Token for runner registration (needs repo scope)"
+  sensitive   = true
+  default     = ""
+}
+
+variable "github_org" {
+  type        = string
+  description = "GitHub organization to register the runner (e.g. 'freecloudinitiative')"
+  default     = "freecloudinitiative"
 }
 
 variable "cluster_mode" {
