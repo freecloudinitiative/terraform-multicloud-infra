@@ -25,7 +25,7 @@ resource "civo_firewall" "runner_fw" {
     action     = "allow"
     protocol   = "tcp"
     port_range = "22"
-    cidr       = ["0.0.0.0/0"] # Limit this to your own IP for better security
+    cidr       = var.admin_cidrs
   }
 
   egress_rule {

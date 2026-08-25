@@ -22,6 +22,12 @@ variable "network_id" {
   default     = ""
 }
 
+variable "admin_cidrs" {
+  type        = list(string)
+  description = "List of trusted CIDRs for SSH access. Defaults to everywhere (0.0.0.0/0) but should be restricted."
+  default     = ["0.0.0.0/0"]
+}
+
 variable "github_pat" {
   type        = string
   description = "GitHub Personal Access Token for runner registration (needs repo scope)"
