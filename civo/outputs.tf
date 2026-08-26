@@ -1,9 +1,15 @@
-output "instance_ids" {
-  description = "The IDs of the runner instances"
-  value       = civo_instance.runner[*].id
+output "external_ips" {
+  description = "Public IP addresses for all cluster instances"
+  value = merge(
+    { for name, instance in civo_instance.master : name => instance.public_ip },
+    { for name, instance in civo_instance.worker : name => instance.public_ip }
+  )
 }
 
-output "public_ips" {
-  description = "The public IPs of the runner instances"
-  value       = civo_instance.runner[*].public_ip
+output "private_ips" {
+  description = "Private IP addresses for all cluster instances"
+  value = merge(
+    { for name, instance in civo_instance.master : name => instance.private_ip },
+    { for name, instance in civo_instance.worker : name => instance.private_ip }
+  )
 }
