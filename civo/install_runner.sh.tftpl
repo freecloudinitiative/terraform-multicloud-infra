@@ -26,8 +26,14 @@ systemctl enable --now docker || service docker start
 # Install yq with architecture detection, strict failure handling, and checksum verification
 ARCH=$(uname -m)
 case $ARCH in
-  x86_64) YQ_ARCH="amd64" ;;
-  aarch64|arm64) YQ_ARCH="arm64" ;;
+  x86_64) 
+    YQ_ARCH="amd64" 
+    RUNNER_ARCH="x64"
+    ;;
+  aarch64|arm64) 
+    YQ_ARCH="arm64" 
+    RUNNER_ARCH="arm64"
+    ;;
   *) echo "Unsupported architecture: $ARCH"; exit 1 ;;
 esac
 
@@ -53,8 +59,8 @@ cd /home/github
 
 # Download latest runner package
 RUNNER_VERSION="2.336.0"
-TARBALL="/home/github/actions-runner-linux-x64-$${RUNNER_VERSION}.tar.gz"
-curl -o "$TARBALL" -L https://github.com/actions/runner/releases/download/v$${RUNNER_VERSION}/actions-runner-linux-x64-$${RUNNER_VERSION}.tar.gz
+TARBALL="/home/github/actions-runner-linux-$${RUNNER_ARCH}-$${RUNNER_VERSION}.tar.gz"
+curl -o "$TARBALL" -L https://github.com/actions/runner/releases/download/v$${RUNNER_VERSION}/actions-runner-linux-$${RUNNER_ARCH}-$${RUNNER_VERSION}.tar.gz
 chown github:github "$TARBALL"
 
 # If no PAT is provided, exit early (user can configure manually)
