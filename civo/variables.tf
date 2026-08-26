@@ -67,11 +67,11 @@ variable "runners_per_vm" {
 variable "simple_node_count" {
   type        = number
   description = "Number of runner VMs when cluster_mode is 'simple'"
-  default     = 2
+  default     = 1
 }
 
 variable "ha_node_count" {
   type        = number
   description = "Number of runner VMs when cluster_mode is 'HA'"
-  default     = 3
+  default     = 2
 }
