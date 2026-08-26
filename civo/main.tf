@@ -46,6 +46,7 @@ resource "civo_instance" "runner" {
   hostname    = "${var.instance_name}-${count.index + 1}"
   size        = var.instance_size
   disk_image  = data.civo_disk_image.ubuntu.diskimages[0].id
+  volume_type = "standard"
   network_id  = var.network_id == "" ? null : data.civo_network.custom[0].id
   firewall_id = civo_firewall.runner_fw.id
 
