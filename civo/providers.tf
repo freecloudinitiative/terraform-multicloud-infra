@@ -1,4 +1,5 @@
 terraform {
+  required_version = ">= 1.0"
   required_providers {
     civo = {
       source  = "civo/civo"
@@ -9,5 +10,4 @@ terraform {
 
 provider "civo" {
   region = var.region
-  # Note: You should export CIVO_TOKEN in your environment variables.
 }

@@ -4,46 +4,9 @@ variable "region" {
   default     = "FRA1"
 }
 
-variable "instance_name" {
-  type        = string
-  description = "The name of the runner instance"
-  default     = "github-runner-civo"
-}
-
-variable "instance_size" {
-  type        = string
-  description = "The size of the instance. Change to Civo's specific ARM instance size if applicable."
-  default     = "g4s.large"
-}
-
-variable "network_id" {
-  type        = string
-  description = "The ID of the network to deploy into. Leaves default if empty."
-  default     = ""
-}
-
-variable "admin_cidrs" {
-  type        = list(string)
-  description = "List of trusted CIDRs for SSH access. Defaults to everywhere (0.0.0.0/0) but should be restricted."
-  default     = ["0.0.0.0/0"]
-}
-
-variable "github_pat" {
-  type        = string
-  description = "GitHub Personal Access Token for runner registration (needs repo scope)"
-  sensitive   = true
-  default     = ""
-}
-
-variable "github_org" {
-  type        = string
-  description = "GitHub organization to register the runner (e.g. 'freecloudinitiative')"
-  default     = "freecloudinitiative"
-}
-
 variable "cluster_mode" {
   type        = string
-  description = "Cluster mode: 'simple' or 'HA'"
+  description = "Cluster mode: 'simple' (1 master + 3 workers) or 'HA' (3 masters + 3 workers)"
   default     = "simple"
 
   validation {
@@ -52,26 +15,26 @@ variable "cluster_mode" {
   }
 }
 
-variable "runners_per_vm" {
-  type        = number
-  description = "Number of GitHub Actions runner instances to run concurrently per VM"
-  default     = 4
-
-  validation {
-    condition     = var.runners_per_vm > 0 && floor(var.runners_per_vm) == var.runners_per_vm
-    error_message = "runners_per_vm must be a positive integer."
-  }
+variable "instance_size" {
+  type        = string
+  description = "The Civo instance size"
+  default     = "g4s.small"
 }
 
-
-variable "simple_node_count" {
-  type        = number
-  description = "Number of runner VMs when cluster_mode is 'simple'"
-  default     = 2
+variable "admin_ip_ranges" {
+  type        = list(string)
+  description = "IP ranges allowed to access administrative services (SSH, K3s API)"
+  default     = ["0.0.0.0/0"]
 }
 
-variable "ha_node_count" {
-  type        = number
-  description = "Number of runner VMs when cluster_mode is 'HA'"
-  default     = 3
+variable "network_id" {
+  type        = string
+  description = "Optional custom network ID. Uses default network if empty."
+  default     = ""
+}
+
+variable "ssh_key_id" {
+  type        = string
+  description = "Optional Civo SSH key ID to associate with the instances"
+  default     = ""
 }
