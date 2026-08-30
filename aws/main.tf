@@ -14,15 +14,7 @@ resource "aws_instance" "master" {
   instance_type = each.value.instance_type
   subnet_id     = aws_subnet.k3s_subnet[each.value.availability_zone].id
 
-  vpc_security_group_ids = [
-    aws_security_group.allow_web.id,
-    aws_security_group.allow_k3s_api_from_local.id,
-    aws_security_group.allow_k3s_internal.id,
-    aws_security_group.k3s_allow_icmp.id,
-    aws_security_group.k3s_allow_internal.id,
-    aws_security_group.k3s_allow_ssh.id,
-    aws_security_group.k3s_egress.id
-  ]
+  vpc_security_group_ids = [aws_security_group.k3s_node.id]
 
   root_block_device {
     volume_size = 50
@@ -40,15 +32,7 @@ resource "aws_instance" "worker" {
   instance_type = each.value.instance_type
   subnet_id     = aws_subnet.k3s_subnet[each.value.availability_zone].id
 
-  vpc_security_group_ids = [
-    aws_security_group.allow_web.id,
-    aws_security_group.allow_k3s_api_from_local.id,
-    aws_security_group.allow_k3s_internal.id,
-    aws_security_group.k3s_allow_icmp.id,
-    aws_security_group.k3s_allow_internal.id,
-    aws_security_group.k3s_allow_ssh.id,
-    aws_security_group.k3s_egress.id
-  ]
+  vpc_security_group_ids = [aws_security_group.k3s_node.id]
 
   root_block_device {
     volume_size = 50
