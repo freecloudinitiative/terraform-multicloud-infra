@@ -50,7 +50,7 @@ resource "aws_security_group" "k3s_node" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = [local.vpc_cidr, local.secondary_vpc_cidr]
+    cidr_blocks = local.cluster_cidrs
   }
 
   egress {
@@ -112,7 +112,7 @@ resource "aws_security_group" "k3s_node_secondary" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = [local.vpc_cidr, local.secondary_vpc_cidr]
+    cidr_blocks = local.cluster_cidrs
   }
 
   egress {
