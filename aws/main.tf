@@ -27,6 +27,10 @@ resource "aws_instance" "master" {
 
   vpc_security_group_ids = [aws_security_group.k3s_node.id]
 
+  metadata_options {
+    http_tokens = "required"
+  }
+
   root_block_device {
     volume_size = 50
     volume_type = "gp3"
@@ -45,6 +49,10 @@ resource "aws_instance" "worker" {
 
   vpc_security_group_ids = [aws_security_group.k3s_node.id]
 
+  metadata_options {
+    http_tokens = "required"
+  }
+
   root_block_device {
     volume_size = 50
     volume_type = "gp3"
@@ -62,6 +70,10 @@ resource "aws_instance" "worker_secondary" {
   subnet_id     = aws_subnet.k3s_subnet_secondary.id
 
   vpc_security_group_ids = [aws_security_group.k3s_node_secondary.id]
+
+  metadata_options {
+    http_tokens = "required"
+  }
 
   root_block_device {
     volume_size = 50
