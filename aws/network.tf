@@ -19,7 +19,7 @@ resource "aws_internet_gateway" "igw" {
 resource "aws_subnet" "k3s_subnet" {
   for_each                = toset(["${var.aws_region}a", "${var.aws_region}b", "${var.aws_region}c"])
   vpc_id                  = aws_vpc.k3s_vpc.id
-  cidr_block              = cidrsubnet(aws_vpc.k3s_vpc.cidr_block, 8, index(toset(["${var.aws_region}a", "${var.aws_region}b", "${var.aws_region}c"]), each.value))
+  cidr_block              = cidrsubnet(aws_vpc.k3s_vpc.cidr_block, 8, index(["${var.aws_region}a", "${var.aws_region}b", "${var.aws_region}c"], each.value))
   availability_zone       = each.key
   map_public_ip_on_launch = true
 
