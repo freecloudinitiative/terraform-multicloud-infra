@@ -5,23 +5,30 @@ output "vpc_id" {
 
 output "secondary_vpc_id" {
   value       = aws_vpc.k3s_vpc_secondary.id
-  description = "The ID of the secondary-region VPC used by worker-2"
+  description = "The ID of the secondary-region VPC used by worker-2, worker-3, and worker-4"
 }
 
 output "external_ips" {
   description = "Public IP addresses for all cluster instances"
-  value = merge(
-    { for name, instance in aws_instance.master : name => instance.public_ip },
-    { for name, instance in aws_instance.worker : name => instance.public_ip },
-    { "worker-2" = aws_instance.worker_secondary.public_ip }
-  )
+  value       = { for name, instance in local.instances : name => instance.public_ip }
 }
 
 output "private_ips" {
   description = "Private IP addresses for all cluster instances"
-  value = merge(
-    { for name, instance in aws_instance.master : name => instance.private_ip },
-    { for name, instance in aws_instance.worker : name => instance.private_ip },
-    { "worker-2" = aws_instance.worker_secondary.private_ip }
-  )
+  value       = { for name, instance in local.instances : name => instance.private_ip }
+}
+
+output "regions" {
+  description = "AWS region for each cluster instance"
+  value       = { for name, instance in local.instances : name => instance.region }
+}
+
+output "engines" {
+  description = "Instance type (engine) for each cluster instance"
+  value       = { for name, instance in local.instances : name => instance.engine }
+}
+
+output "instances" {
+  description = "Cluster instances with IPs, region, and engine"
+  value       = local.instances
 }

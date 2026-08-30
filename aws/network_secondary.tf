@@ -20,13 +20,14 @@ resource "aws_internet_gateway" "igw_secondary" {
 
 resource "aws_subnet" "k3s_subnet_secondary" {
   provider                = aws.secondary
+  for_each                = toset(local.secondary_azs)
   vpc_id                  = aws_vpc.k3s_vpc_secondary.id
-  cidr_block              = cidrsubnet(aws_vpc.k3s_vpc_secondary.cidr_block, 8, 0)
-  availability_zone       = local.worker_secondary.availability_zone
+  cidr_block              = cidrsubnet(aws_vpc.k3s_vpc_secondary.cidr_block, 8, index(local.secondary_azs, each.value))
+  availability_zone       = each.key
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "k3s-subnet-${local.worker_secondary.availability_zone}"
+    Name = "k3s-subnet-${each.key}"
   }
 }
 
@@ -46,8 +47,19 @@ resource "aws_route_table" "public_rt_secondary" {
 
 resource "aws_route_table_association" "public_rt_assoc_secondary" {
   provider       = aws.secondary
-  subnet_id      = aws_subnet.k3s_subnet_secondary.id
+  for_each       = aws_subnet.k3s_subnet_secondary
+  subnet_id      = each.value.id
   route_table_id = aws_route_table.public_rt_secondary.id
+}
+
+moved {
+  from = aws_subnet.k3s_subnet_secondary
+  to   = aws_subnet.k3s_subnet_secondary["us-west-2a"]
+}
+
+moved {
+  from = aws_route_table_association.public_rt_assoc_secondary
+  to   = aws_route_table_association.public_rt_assoc_secondary["us-west-2a"]
 }
 
 resource "aws_vpc_peering_connection" "primary_to_secondary" {

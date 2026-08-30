@@ -6,7 +6,7 @@ variable "aws_region" {
 
 variable "aws_secondary_region" {
   type        = string
-  description = "Region for worker-2 when the primary region cannot launch more instances"
+  description = "Region for worker-2, worker-3, and worker-4 when the primary region cannot launch more instances"
   default     = "us-west-2"
 }
 

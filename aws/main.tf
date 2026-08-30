@@ -65,9 +65,10 @@ resource "aws_instance" "worker" {
 
 resource "aws_instance" "worker_secondary" {
   provider      = aws.secondary
+  for_each      = local.workers_secondary
   ami           = data.aws_ami.ubuntu_arm64_secondary.id
-  instance_type = local.worker_secondary.instance_type
-  subnet_id     = aws_subnet.k3s_subnet_secondary.id
+  instance_type = each.value.instance_type
+  subnet_id     = aws_subnet.k3s_subnet_secondary[each.value.availability_zone].id
 
   vpc_security_group_ids = [aws_security_group.k3s_node_secondary.id]
 
@@ -81,6 +82,11 @@ resource "aws_instance" "worker_secondary" {
   }
 
   tags = {
-    Name = "worker-2"
+    Name = each.key
   }
+}
+
+moved {
+  from = aws_instance.worker_secondary
+  to   = aws_instance.worker_secondary["worker-2"]
 }
