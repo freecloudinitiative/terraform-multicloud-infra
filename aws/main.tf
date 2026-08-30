@@ -22,7 +22,7 @@ data "aws_ami" "ubuntu_arm64_secondary" {
 resource "aws_key_pair" "secondary" {
   provider   = aws.secondary
   key_name   = "fci_keypair"
-  public_key = file("~/.ssh/fci_keypair.pub")
+  public_key = file("${path.module}/fci_keypair.pub")
 }
 
 resource "aws_instance" "master" {
