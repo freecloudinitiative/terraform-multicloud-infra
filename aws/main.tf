@@ -19,10 +19,15 @@ data "aws_ami" "ubuntu_arm64_secondary" {
   }
 }
 
+data "aws_key_pair" "primary" {
+  key_name           = "fci_keypair"
+  include_public_key = true
+}
+
 resource "aws_key_pair" "secondary" {
   provider   = aws.secondary
   key_name   = "fci_keypair"
-  public_key = file("${path.module}/fci_keypair.pub")
+  public_key = data.aws_key_pair.primary.public_key
 }
 
 resource "aws_instance" "master" {
