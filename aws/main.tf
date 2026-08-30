@@ -19,10 +19,17 @@ data "aws_ami" "ubuntu_arm64_secondary" {
   }
 }
 
+resource "aws_key_pair" "secondary" {
+  provider   = aws.secondary
+  key_name   = "fci_keypair"
+  public_key = file("~/.ssh/fci_keypair.pub")
+}
+
 resource "aws_instance" "master" {
   for_each      = local.masters
   ami           = data.aws_ami.ubuntu_arm64.id
   instance_type = each.value.instance_type
+  key_name      = "fci_keypair"
   subnet_id     = aws_subnet.k3s_subnet[each.value.availability_zone].id
 
   vpc_security_group_ids = [aws_security_group.k3s_node.id]
@@ -45,6 +52,7 @@ resource "aws_instance" "worker" {
   for_each      = local.workers
   ami           = data.aws_ami.ubuntu_arm64.id
   instance_type = each.value.instance_type
+  key_name      = "fci_keypair"
   subnet_id     = aws_subnet.k3s_subnet[each.value.availability_zone].id
 
   vpc_security_group_ids = [aws_security_group.k3s_node.id]
@@ -68,6 +76,7 @@ resource "aws_instance" "worker_secondary" {
   for_each      = local.workers_secondary
   ami           = data.aws_ami.ubuntu_arm64_secondary.id
   instance_type = each.value.instance_type
+  key_name      = aws_key_pair.secondary.key_name
   subnet_id     = aws_subnet.k3s_subnet_secondary[each.value.availability_zone].id
 
   vpc_security_group_ids = [aws_security_group.k3s_node_secondary.id]
