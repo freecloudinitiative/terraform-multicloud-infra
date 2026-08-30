@@ -4,6 +4,12 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
+variable "aws_secondary_region" {
+  type        = string
+  description = "Region for worker-2 when the primary region cannot launch more instances"
+  default     = "us-west-2"
+}
+
 variable "aws_admin_ip_ranges" {
   type        = list(string)
   description = "IP ranges allowed to access administrative services (usually your public IP, you can find it using 'curl ifconfig.me')"
