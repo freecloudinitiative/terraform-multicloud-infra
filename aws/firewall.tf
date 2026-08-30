@@ -22,6 +22,22 @@ resource "aws_security_group" "k3s_node" {
   }
 
   ingress {
+    description = "ArgoCD Port Forward"
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "OpenBao Port Forward"
+    from_port   = 8200
+    to_port     = 8200
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
     description = "SSH from admin IPs"
     from_port   = 22
     to_port     = 22
@@ -79,6 +95,22 @@ resource "aws_security_group" "k3s_node_secondary" {
     description = "HTTPS"
     from_port   = 443
     to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "ArgoCD Port Forward"
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "OpenBao Port Forward"
+    from_port   = 8200
+    to_port     = 8200
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
