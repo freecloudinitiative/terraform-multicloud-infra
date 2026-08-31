@@ -34,7 +34,7 @@ locals {
       availability_zone = "${var.aws_secondary_region}a"
     }
     "worker-3" = {
-      instance_type     = "t4g.small"
+      instance_type     = "t4g.medium"
       availability_zone = "${var.aws_secondary_region}c"
     }
     "worker-4" = {
